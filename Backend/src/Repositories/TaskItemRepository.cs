@@ -16,25 +16,31 @@ public class TaskItemRepository : ITaskItemRepository
 
   public async Task<TaskItem> CreateTaskItemAsync(CreateTaskItemDto dto)
   {
-    var taskItem = new TaskItem(dto.Title, dto.Description);
+    var taskItem = new TaskItem(dto.UserId, dto.Title, dto.Description);
     _context.TaskItems.Add(taskItem);
     await _context.SaveChangesAsync();
     return taskItem;
   }
 
-  public async Task<IEnumerable<TaskItem>> GetAllTasksItemAsync()
+  public async Task<bool> DeleteTaskItemByIdAsync(int id)
   {
-    var result = _context.TaskItems.ToListAsync();
-    return await result;
+    var taskItem = _context.TaskItems.FirstOrDefaultAsync(t => t.Id == id).Result;
+    if (taskItem == null)
+    {
+      return false;
+    }
+    _context.TaskItems.Remove(taskItem);
+    return true;
   }
 
   public async Task<TaskItem> GetTaskItemByIdAsync(int id)
   {
-    var taskItem = _context.TaskItems.FirstOrDefaultAsync(t => t.Id == id);
-    if (taskItem == null)
-    {
-      throw new KeyNotFoundException($"TaskItem with id {id} not found.");
-    }
-    return await taskItem;
+    return await _context.TaskItems.FirstOrDefaultAsync(t => t.Id == id);
   }
+
+  public async Task<IEnumerable<TaskItem>> GetTaskItemsByUserIdAsync(int userId)
+  {
+    return await _context.TaskItems.Where(t => t.UserId == userId).ToListAsync();
+  }
+
 }

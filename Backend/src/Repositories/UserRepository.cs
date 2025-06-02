@@ -18,7 +18,7 @@ public class UserRepository : IUserRepository
   public async Task<User> CreateUserAsync(CreateUserDto dto)
   {
     var user = new User(dto.Name, dto.Email);
-    _context.Users.AddAsync(user);
+    await _context.Users.AddAsync(user);
     await _context.SaveChangesAsync();
     return user;
   }
