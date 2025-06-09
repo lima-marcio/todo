@@ -13,6 +13,13 @@ builder.Services.AddScoped<IUserUseCase, UserUseCase>();
 
 var app = builder.Build();
 
+app.UseCors(policy => policy
+    .WithOrigins("http://localhost:5173")
+    .AllowAnyMethod()
+    .AllowAnyHeader()
+    .AllowCredentials());
+
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
